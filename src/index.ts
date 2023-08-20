@@ -1,4 +1,5 @@
-import express, { NextFunction, Request, Response } from 'express'
+import express from 'express'
+import { defaultErrorHandler } from './middlewares/error.middleware'
 import usersRouter from './routes/users.routes'
 import databaseService from './services/database.service'
 
@@ -8,10 +9,7 @@ const port = 3000
 app.use(express.json())
 app.use('/users', usersRouter)
 // default error handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.message)
-  res.status(405).json({ error: err.message })
-})
+app.use(defaultErrorHandler)
 //connect mongo Atlat
 databaseService.connect()
 
