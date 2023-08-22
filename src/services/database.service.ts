@@ -37,7 +37,7 @@ class DataBaseService {
     return this.db.collection('users')
   }
 
-  get refreshToken(): Collection<RefreshToken> {
+  get refreshTokens(): Collection<RefreshToken> {
     return this.db.collection('refresh_tokens')
   }
 }

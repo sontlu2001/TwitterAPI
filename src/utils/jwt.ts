@@ -1,16 +1,17 @@
 import jwt, { SignOptions } from 'jsonwebtoken'
 import { config } from 'dotenv'
+import { TokenPayLoad } from '~/models/request/User.request'
 config()
 
 export const signToken = ({
   payload,
-  privateKey = process.env.JWT_SECRET as string,
+  privateKey,
   option = {
     algorithm: 'HS256'
   }
 }: {
   payload: string | object | Buffer
-  privateKey?: string
+  privateKey: string
   option?: SignOptions
 }) => {
   return new Promise<string>((resolve, reject) => {
@@ -21,17 +22,11 @@ export const signToken = ({
   })
 }
 
-export const verifyToken = ({
-  token,
-  secretOrPublicKey = process.env.JWT_SECRET as string
-}: {
-  token: string
-  secretOrPublicKey?: string
-}) => {
-  return new Promise<jwt.JwtPayload>((resolve, reject) => {
+export const verifyToken = ({ token, secretOrPublicKey }: { token: string; secretOrPublicKey: string }) => {
+  return new Promise<TokenPayLoad>((resolve, reject) => {
     jwt.verify(token, secretOrPublicKey, (err, decoded) => {
       if (err) throw reject(err)
-      resolve(decoded as jwt.JwtPayload)
+      resolve(decoded as TokenPayLoad)
     })
   })
 }

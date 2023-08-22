@@ -2,14 +2,9 @@ import { USER_MESSAGES } from '~/constants/message'
 import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
-import { RegisterReqBody } from '~/models/request/User.request'
+import { LogoutReqBody, RegisterReqBody } from '~/models/request/User.request'
 import User from '~/models/schemas/User.schema'
 import usersService from '~/services/users.services'
-
-interface UserInfo {
-  email: string
-  password: string
-}
 
 export const loginController = async (req: Request, res: Response) => {
   const user = req.user as User
@@ -26,14 +21,15 @@ export const registerController = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const result = await usersService.register(req.body)
-    return res.json({
-      message: USER_MESSAGES.REGISTER_SUCCESS,
-      result
-    })
-  } catch (error) {
-    console.log(error)
-    next(error)
-  }
+  const result = await usersService.register(req.body)
+  return res.json({
+    message: USER_MESSAGES.REGISTER_SUCCESS,
+    result
+  })
+}
+
+export const logoutController = async (req: Request<ParamsDictionary, any, LogoutReqBody>, res: Response) => {
+  const { refreshToken } = req.body
+  const result = await usersService.logout(refreshToken)
+  return res.json(result)
 }

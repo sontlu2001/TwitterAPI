@@ -1,6 +1,6 @@
+import { USER_MESSAGES } from '~/constants/message'
 import { TokenType } from './../constants/enum'
 import { RegisterReqBody } from '~/models/request/User.request'
-import { generateKeyPairSync } from 'crypto'
 import User from '~/models/schemas/User.schema'
 import databaseService from './database.service'
 import { hashPassword } from '~/utils/crypto'
@@ -17,6 +17,7 @@ class UsersService {
         userId,
         token_type: TokenType.AccessToken
       },
+      privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
       option: {
         expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN
       }
@@ -29,6 +30,7 @@ class UsersService {
         userId,
         token_type: TokenType.RefreshToken
       },
+      privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
       option: {
         expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN
       }
@@ -49,7 +51,7 @@ class UsersService {
     )
     const userId = result.insertedId.toString()
     const [accessToken, refreshToken] = await this.signAccessTokenAndRefreshToken(userId)
-    await databaseService.refreshToken.insertOne(
+    await databaseService.refreshTokens.insertOne(
       new RefreshToken({ user_id: new ObjectId(userId), token: refreshToken })
     )
     return {
@@ -65,12 +67,19 @@ class UsersService {
 
   async login(userId: string) {
     const [accessToken, refreshToken] = await this.signAccessTokenAndRefreshToken(userId)
-    await databaseService.refreshToken.insertOne(
+    await databaseService.refreshTokens.insertOne(
       new RefreshToken({ user_id: new ObjectId(userId), token: refreshToken })
     )
     return {
       accessToken,
       refreshToken
+    }
+  }
+
+  async logout(refreshToken: string) {
+    await databaseService.refreshTokens.deleteOne({ token: refreshToken })
+    return {
+      message: USER_MESSAGES.LOGOUT_SUCCESS
     }
   }
 }
