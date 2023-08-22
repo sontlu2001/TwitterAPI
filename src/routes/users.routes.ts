@@ -1,10 +1,16 @@
 import { NextFunction, Request, Response, Router } from 'express'
-import { loginController, logoutController, registerController } from '~/controllers/users.controllers'
+import {
+  loginController,
+  logoutController,
+  registerController,
+  verifyEmailController
+} from '~/controllers/users.controllers'
 import {
   accessTokenValidator,
   loginValidator,
   refreshTokenValidator,
-  registerValidator
+  registerValidator,
+  verifyEmailValidator
 } from '~/middlewares/users.middleware'
 import { wrapRequestHandler } from '~/utils/handles'
 import { validate } from '~/utils/validation'
@@ -24,5 +30,6 @@ usersRouter.post(
   validate(refreshTokenValidator),
   wrapRequestHandler(logoutController)
 )
+usersRouter.post('/verify-email', validate(verifyEmailValidator), wrapRequestHandler(verifyEmailController))
 
 export default usersRouter

@@ -184,3 +184,34 @@ export const refreshTokenValidator = checkSchema(
   },
   ['body']
 )
+
+export const verifyEmailValidator = checkSchema({
+  emailVerifyToken: {
+    trim: true,
+    custom: {
+      options: async (value, { req }) => {
+        if (!value)
+          throw new ErrorWithStatus({
+            message: USER_MESSAGES.EMAIL_IS_REQUIRED,
+            status: HTTP_STATUS.UNAUTHORIZED
+          })
+        try {
+          const decodedEmailVerifyToken = await verifyToken({
+            token: value,
+            secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
+          })
+          ;(req as Request).decodedEmailVerifyToken = decodedEmailVerifyToken
+        } catch (error) {
+          if (error instanceof JsonWebTokenError) {
+            throw new ErrorWithStatus({
+              message: USER_MESSAGES.REFRESH_TOKEN_IS_INVALID,
+              status: HTTP_STATUS.UNAUTHORIZED
+            })
+          }
+          throw error
+        }
+        return true
+      }
+    }
+  }
+})

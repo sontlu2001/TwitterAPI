@@ -1,10 +1,12 @@
+import databaseService from '~/services/database.service'
 import { USER_MESSAGES } from '~/constants/message'
 import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
-import { LogoutReqBody, RegisterReqBody } from '~/models/request/User.request'
+import { LogoutReqBody, RegisterReqBody, TokenPayLoad } from '~/models/request/User.request'
 import User from '~/models/schemas/User.schema'
 import usersService from '~/services/users.services'
+import { HTTP_STATUS } from '~/constants/httpStatus'
 
 export const loginController = async (req: Request, res: Response) => {
   const user = req.user as User
@@ -32,4 +34,30 @@ export const logoutController = async (req: Request<ParamsDictionary, any, Logou
   const { refreshToken } = req.body
   const result = await usersService.logout(refreshToken)
   return res.json(result)
+}
+
+export const verifyEmailController = async (
+  req: Request<ParamsDictionary, any, LogoutReqBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req.decodedEmailVerifyToken as TokenPayLoad
+  const user = await databaseService.users.findOne({ _id: new ObjectId(userId) })
+  if (!user) {
+    return res.status(HTTP_STATUS.NOTFOUND).json({
+      message: USER_MESSAGES.USER_NOT_FOUND
+    })
+  }
+  // Đã verify email sẽ trả về status OK với message là user đã verify email
+  if (user.email_verify_token === '') {
+    return res.status(HTTP_STATUS.OK).json({
+      message: USER_MESSAGES.EMAIL_AlREADY_VERIFIED
+    })
+  }
+  // Nếu chưa verify email
+  const result = await usersService.verifyEmail(userId)
+  return res.json({
+    message: USER_MESSAGES.EMAIL_VERIFY_SUCCESS,
+    result
+  })
 }

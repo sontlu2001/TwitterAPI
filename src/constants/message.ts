@@ -8,6 +8,8 @@ export const USER_MESSAGES = {
   EMAIL_ALREADY_EXISTS: 'Email already exists',
   EMAIL_IS_INVALID: 'Email is invalid',
   EMAIL_OR_PASSWORD_IS_INCORRECT: 'Email or password is incorrect',
+  EMAIL_AlREADY_VERIFIED: 'Email already verified',
+  EMAIL_VERIFY_SUCCESS: 'Email verify success',
   PASSWORD_IS_REQUIRED: 'Password is required',
   PASSWORD_MUST_BE_A_STRING: 'Password must be a string',
   PASSWORD_MUST_BE_FROM_6_TO_30_CHARACTERS: 'Password must be from 6 to 30 characters',
