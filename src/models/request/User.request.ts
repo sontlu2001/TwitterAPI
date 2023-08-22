@@ -8,6 +8,11 @@ export interface RegisterReqBody {
   date_of_birth: string
 }
 
+export interface LoginReqBody {
+  email: string
+  password: string
+}
+
 export interface LogoutReqBody {
   refreshToken: string
 }
@@ -15,4 +20,8 @@ export interface LogoutReqBody {
 export interface TokenPayLoad extends JwtPayload {
   userId: string
   token_type: string
+}
+
+export interface VerifyEmailReqBody {
+  emailVerifyToken: string
 }

@@ -10,6 +10,7 @@ export const USER_MESSAGES = {
   EMAIL_OR_PASSWORD_IS_INCORRECT: 'Email or password is incorrect',
   EMAIL_AlREADY_VERIFIED: 'Email already verified',
   EMAIL_VERIFY_SUCCESS: 'Email verify success',
+  EMAIL_RESEND_VERIFY_SUCCESS: 'Email resend verify success',
   PASSWORD_IS_REQUIRED: 'Password is required',
   PASSWORD_MUST_BE_A_STRING: 'Password must be a string',
   PASSWORD_MUST_BE_FROM_6_TO_30_CHARACTERS: 'Password must be from 6 to 30 characters',
