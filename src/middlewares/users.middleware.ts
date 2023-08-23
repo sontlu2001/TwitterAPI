@@ -9,6 +9,7 @@ import { HTTP_STATUS } from '~/constants/httpStatus'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { capitalize, concat } from 'lodash'
 import { Request } from 'express'
+import { ObjectId } from 'mongodb'
 
 interface UserInfo {
   email: string
@@ -231,6 +232,53 @@ export const forgotPasswordValidator = checkSchema(
           const user = await databaseService.users.findOne({ email: value })
           if (!user) throw new Error(USER_MESSAGES.EMAIL_NOT_FOUND)
           req.user = user
+          return true
+        }
+      }
+    }
+  },
+  ['body']
+)
+
+export const verifyForgotPasswordTokenValidator = checkSchema(
+  {
+    forgotPasswordToken: {
+      trim: true,
+      custom: {
+        options: async (value, { req }) => {
+          if (!value)
+            throw new ErrorWithStatus({
+              message: USER_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
+              status: HTTP_STATUS.UNAUTHORIZED
+            })
+          try {
+            const decodedForgotPasswordToken = await verifyToken({
+              token: value,
+              secretOrPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string
+            })
+            const { userId } = decodedForgotPasswordToken
+            const user = await databaseService.users.findOne({ _id: new ObjectId(userId) })
+            if (!user) {
+              throw new ErrorWithStatus({
+                message: USER_MESSAGES.USER_NOT_FOUND,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+            if (user.forgot_password_token !== value) {
+              throw new ErrorWithStatus({
+                message: USER_MESSAGES.FORGOT_PASSWORD_TOKEN_INVALID,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+          } catch (error) {
+            if (error instanceof JsonWebTokenError) {
+              throw new ErrorWithStatus({
+                message: USER_MESSAGES.REFRESH_TOKEN_IS_INVALID,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+            throw error
+          }
           return true
         }
       }

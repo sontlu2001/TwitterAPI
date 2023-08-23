@@ -28,5 +28,8 @@ export const USER_MESSAGES = {
   REFRESH_TOKEN_IS_INVALID: 'Refresh token is invalid',
   LOGOUT_SUCCESS: 'Logout success',
   REFRESH_TOKEN_NOT_FOUND: 'Refresh token not found',
-  CHECK_EMAIL_TO_RESET_PASSWORD: 'Check email to reset password'
+  CHECK_EMAIL_TO_RESET_PASSWORD: 'Check email to reset password',
+  FORGOT_PASSWORD_TOKEN_IS_REQUIRED: 'Forgot password token is required',
+  FORGOT_PASSWORD_TOKEN_INVALID: 'Forgot password token invalid',
+  USER_VERIFY_FORGOT_PASSWORD_TOKEN_SUCCESS: 'User verify forgot password token success'
 } as const
