@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import {
+  forgotPasswordController,
   loginController,
   logoutController,
   registerController,
@@ -8,6 +9,7 @@ import {
 } from '~/controllers/users.controllers'
 import {
   accessTokenValidator,
+  forgotPasswordValidator,
   loginValidator,
   refreshTokenValidator,
   registerValidator,
@@ -37,5 +39,6 @@ usersRouter.post(
   validate(accessTokenValidator),
   wrapRequestHandler(resendVerifyEmailController)
 )
+usersRouter.post('/forgot-password', validate(forgotPasswordValidator), wrapRequestHandler(forgotPasswordController))
 
 export default usersRouter

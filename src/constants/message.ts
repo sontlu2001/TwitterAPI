@@ -11,6 +11,7 @@ export const USER_MESSAGES = {
   EMAIL_AlREADY_VERIFIED: 'Email already verified',
   EMAIL_VERIFY_SUCCESS: 'Email verify success',
   EMAIL_RESEND_VERIFY_SUCCESS: 'Email resend verify success',
+  EMAIL_NOT_FOUND: 'Email not found',
   PASSWORD_IS_REQUIRED: 'Password is required',
   PASSWORD_MUST_BE_A_STRING: 'Password must be a string',
   PASSWORD_MUST_BE_FROM_6_TO_30_CHARACTERS: 'Password must be from 6 to 30 characters',
@@ -26,5 +27,6 @@ export const USER_MESSAGES = {
   REFRESH_TOKEN_IS_REQUIRED: 'Refresh token is required',
   REFRESH_TOKEN_IS_INVALID: 'Refresh token is invalid',
   LOGOUT_SUCCESS: 'Logout success',
-  REFRESH_TOKEN_NOT_FOUND: 'Refresh token not found'
+  REFRESH_TOKEN_NOT_FOUND: 'Refresh token not found',
+  CHECK_EMAIL_TO_RESET_PASSWORD: 'Check email to reset password'
 } as const

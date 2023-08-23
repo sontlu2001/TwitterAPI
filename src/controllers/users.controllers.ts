@@ -85,3 +85,12 @@ export const resendVerifyEmailController = async (req: Request, res: Response) =
   const result = await usersService.resendVerifyEmail(userId)
   return res.json(result)
 }
+
+export const forgotPasswordController = async (
+  req: Request<ParamsDictionary, any, VerifyEmailReqBody>,
+  res: Response
+) => {
+  const { _id } = req.user as User
+  const result = await usersService.forgotPassword(_id.toString())
+  return res.json(result)
+}
