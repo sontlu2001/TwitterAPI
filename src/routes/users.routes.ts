@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response, Router } from 'express'
+import { get } from 'lodash'
 import {
   forgotPasswordController,
+  getMyProfileController,
   loginController,
   logoutController,
   registerController,
@@ -55,4 +57,9 @@ usersRouter.post(
   wrapRequestHandler(resetPasswordController)
 )
 
+usersRouter.get(
+  '/get-my-profile',
+  validate(accessTokenValidator),
+  wrapRequestHandler(getMyProfileController)
+)
 export default usersRouter
