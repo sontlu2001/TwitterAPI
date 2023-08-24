@@ -1,3 +1,4 @@
+import { body } from 'express-validator'
 import { UserVerifyStatus } from './../constants/enum'
 import databaseService from '~/services/database.service'
 import { USER_MESSAGES } from '~/constants/message'
@@ -10,6 +11,7 @@ import {
   RegisterReqBody,
   ResetPasswordReqBody,
   TokenPayLoad,
+  UpdateMyProfileReqBody,
   VerifyEmailReqBody,
   VerifyForgotPasswordTokenReqBody
 } from '~/models/request/User.request'
@@ -20,7 +22,10 @@ import { HTTP_STATUS } from '~/constants/httpStatus'
 export const loginController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
   const user = req.user as User
   const userId = user._id as ObjectId
-  const result = await usersService.login(userId.toString())
+  const result = await usersService.login({
+    userId: userId.toString(),
+    verify: user.verify
+  })
   return res.json({
     message: USER_MESSAGES.LOGIN_SUCCESS,
     result
@@ -92,8 +97,12 @@ export const forgotPasswordController = async (
   req: Request<ParamsDictionary, any, VerifyEmailReqBody>,
   res: Response
 ) => {
-  const { _id } = req.user as User
-  const result = await usersService.forgotPassword(_id.toString())
+  const { _id, verify } = req.user as User
+  const result = await usersService.forgotPassword({
+    userId: _id.toString(),
+    verify
+  })
+
   return res.json(result)
 }
 
@@ -118,10 +127,23 @@ export const resetPasswordController = async (
 
 export const getMyProfileController = async (req: Request, res: Response) => {
   const { userId } = req.decodedAuthorization as TokenPayLoad
-  console.log(userId);
+  console.log(userId)
   const user = await usersService.getMyProfile(userId)
   return res.json({
     message: USER_MESSAGES.GET_PROFILE_SUCCESS,
     user
+  })
+}
+
+export const updateMyProfileController = async (
+  req: Request<ParamsDictionary, any, UpdateMyProfileReqBody>,
+  res: Response
+) => {
+  const { userId } = req.decodedAuthorization as TokenPayLoad
+  const payload = req.body
+  const user = await usersService.updateMyProfile(userId, payload)
+  return res.json({
+    message: USER_MESSAGES.UPDATE_MY_PROFILE_SUCCESS,
+    result: user.value
   })
 }

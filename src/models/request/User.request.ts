@@ -35,7 +35,17 @@ export interface VerifyForgotPasswordTokenReqBody {
 }
 
 export interface ResetPasswordReqBody {
-  password: string,
-  confirmPassword: string,
+  password: string
+  confirmPassword: string
   verifyForgotPasswordToken: string
+}
+
+export interface UpdateMyProfileReqBody {
+  name?: string
+  date_of_birth?: string
+  bio?: string
+  location?: string
+  website?: string
+  avatar?: string
+  cover_photo?: string
 }
