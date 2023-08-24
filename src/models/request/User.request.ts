@@ -42,6 +42,7 @@ export interface ResetPasswordReqBody {
 
 export interface UpdateMyProfileReqBody {
   name?: string
+  username?: string
   date_of_birth?: string
   bio?: string
   location?: string
