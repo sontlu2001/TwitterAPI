@@ -3,6 +3,7 @@ import { get } from 'lodash'
 import {
   forgotPasswordController,
   getMyProfileController,
+  getProfileController,
   loginController,
   logoutController,
   registerController,
@@ -75,4 +76,5 @@ usersRouter.patch(
   ]),
   wrapRequestHandler(updateMyProfileController)
 )
+usersRouter.get('/:username', wrapRequestHandler(getProfileController))
 export default usersRouter
