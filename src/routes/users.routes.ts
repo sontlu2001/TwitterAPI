@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import { get } from 'lodash'
 import {
+  changePasswordController,
   followUserController,
   forgotPasswordController,
   getMyProfileController,
@@ -18,6 +19,7 @@ import {
 import { filterMiddleware } from '~/middlewares/common.middleware'
 import {
   accessTokenValidator,
+  changePasswordValidator,
   followUserValidator,
   forgotPasswordValidator,
   loginValidator,
@@ -96,6 +98,14 @@ usersRouter.delete(
   verifiedUserValidator,
   validate(unFollowUserValidator),
   wrapRequestHandler(unFollowUserController)
+)
+
+usersRouter.put(
+  '/change-password',
+  validate(accessTokenValidator),
+  verifiedUserValidator,
+  validate(changePasswordValidator),
+  wrapRequestHandler(changePasswordController)
 )
 
 export default usersRouter

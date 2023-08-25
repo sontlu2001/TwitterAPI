@@ -218,7 +218,7 @@ export const accessTokenValidator = checkSchema(
               token: accessToken,
               secretOrPublicKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
             })
-              ; (req as Request).decodedAuthorization = decodedAuthorization
+            ;(req as Request).decodedAuthorization = decodedAuthorization
           } catch (error) {
             throw new ErrorWithStatus({
               message: 'AccessToken ' + (error as JsonWebTokenError).message,
@@ -254,7 +254,7 @@ export const refreshTokenValidator = checkSchema(
                 status: HTTP_STATUS.UNAUTHORIZED
               })
             }
-            ; (req as Request).decodedRefreshToken = decodedRefreshToken
+            ;(req as Request).decodedRefreshToken = decodedRefreshToken
           } catch (error) {
             if (error instanceof JsonWebTokenError) {
               throw new ErrorWithStatus({
@@ -287,7 +287,7 @@ export const verifyEmailValidator = checkSchema({
             token: value,
             secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
           })
-            ; (req as Request).decodedEmailVerifyToken = decodedEmailVerifyToken
+          ;(req as Request).decodedEmailVerifyToken = decodedEmailVerifyToken
         } catch (error) {
           if (error instanceof JsonWebTokenError) {
             throw new ErrorWithStatus({
@@ -427,6 +427,37 @@ export const followUserValidator = checkSchema({
   followUserId: userIdSchema
 })
 
-export const unFollowUserValidator = checkSchema({
-  userId: userIdSchema
-}, ['params'])
+export const unFollowUserValidator = checkSchema(
+  {
+    userId: userIdSchema
+  },
+  ['params']
+)
+
+export const changePasswordValidator = checkSchema({
+  oldPassword: {
+    ...passwordSchema,
+    custom: {
+      options: async (value, { req }) => {
+        const { userId } = req.decodedAuthorization as TokenPayLoad
+        const user = await databaseService.users.findOne({ _id: new ObjectId(userId) })
+        if (!user) {
+          throw new ErrorWithStatus({
+            message: USER_MESSAGES.USER_NOT_FOUND,
+            status: HTTP_STATUS.NOTFOUND
+          })
+        }
+        const { password } = user
+        const isMatch = hashPassword(value) === password
+        if (!isMatch) {
+          throw new ErrorWithStatus({
+            message: USER_MESSAGES.OLD_PASSWORD_INCORRECT,
+            status: HTTP_STATUS.UNAUTHORIZED
+          })
+        }
+      }
+    }
+  },
+  password: passwordSchema,
+  confirmPassword: confirmPasswordSchema
+})
