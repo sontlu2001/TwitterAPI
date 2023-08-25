@@ -121,6 +121,26 @@ const imageSchema: ParamSchema = {
   }
 }
 
+const userIdSchema: ParamSchema = {
+  custom: {
+    options: async (value: string, { req }) => {
+      if (!ObjectId.isValid(value)) {
+        throw new ErrorWithStatus({
+          message: USER_MESSAGES.INVALID_USER_ID,
+          status: HTTP_STATUS.NOTFOUND
+        })
+      }
+      const followed_user = await databaseService.users.findOne({ _id: new ObjectId(value) })
+      if (followed_user === null) {
+        throw new ErrorWithStatus({
+          message: USER_MESSAGES.USER_NOT_FOUND,
+          status: HTTP_STATUS.NOTFOUND
+        })
+      }
+    }
+  }
+}
+
 export const loginValidator = checkSchema(
   {
     email: {
@@ -198,7 +218,7 @@ export const accessTokenValidator = checkSchema(
               token: accessToken,
               secretOrPublicKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
             })
-            ;(req as Request).decodedAuthorization = decodedAuthorization
+              ; (req as Request).decodedAuthorization = decodedAuthorization
           } catch (error) {
             throw new ErrorWithStatus({
               message: 'AccessToken ' + (error as JsonWebTokenError).message,
@@ -234,7 +254,7 @@ export const refreshTokenValidator = checkSchema(
                 status: HTTP_STATUS.UNAUTHORIZED
               })
             }
-            ;(req as Request).decodedRefreshToken = decodedRefreshToken
+            ; (req as Request).decodedRefreshToken = decodedRefreshToken
           } catch (error) {
             if (error instanceof JsonWebTokenError) {
               throw new ErrorWithStatus({
@@ -267,7 +287,7 @@ export const verifyEmailValidator = checkSchema({
             token: value,
             secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
           })
-          ;(req as Request).decodedEmailVerifyToken = decodedEmailVerifyToken
+            ; (req as Request).decodedEmailVerifyToken = decodedEmailVerifyToken
         } catch (error) {
           if (error instanceof JsonWebTokenError) {
             throw new ErrorWithStatus({
@@ -404,23 +424,9 @@ export const updateMyProfileValidator = checkSchema(
 )
 
 export const followUserValidator = checkSchema({
-  followUserId: {
-    custom: {
-      options: async (value: string, { req }) => {
-        if (!ObjectId.isValid(value)) {
-          throw new ErrorWithStatus({
-            message: USER_MESSAGES.INVALID_FOLLOW_USER_ID,
-            status: HTTP_STATUS.NOTFOUND
-          })
-        }
-        const followed_user = await databaseService.users.findOne({ _id: new ObjectId(value) })
-        if (followed_user === null) {
-          throw new ErrorWithStatus({
-            message: USER_MESSAGES.USER_NOT_FOUND,
-            status: HTTP_STATUS.NOTFOUND
-          })
-        }
-      }
-    }
-  }
+  followUserId: userIdSchema
 })
+
+export const unFollowUserValidator = checkSchema({
+  userId: userIdSchema
+}, ['params'])

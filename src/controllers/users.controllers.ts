@@ -6,12 +6,14 @@ import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
 import {
+  ChangePasswordReqBody,
   FollowUserReqBody,
   LoginReqBody,
   LogoutReqBody,
   RegisterReqBody,
   ResetPasswordReqBody,
   TokenPayLoad,
+  UnFollowUserReqParams,
   UpdateMyProfileReqBody,
   VerifyEmailReqBody,
   VerifyForgotPasswordTokenReqBody
@@ -165,5 +167,12 @@ export const followUserController = async (
   const { userId } = req.decodedAuthorization as TokenPayLoad
   const { followUserId } = req.body
   const result = await usersService.followUser(userId, followUserId)
+  return res.json(result)
+}
+
+export const unFollowUserController = async (req: Request<ParamsDictionary>, res: Response, next: NextFunction) => {
+  const { userId } = req.decodedAuthorization as TokenPayLoad
+  const { userId: followedUserId } = req.params
+  const result = await usersService.unFollowUser(userId, followedUserId)
   return res.json(result)
 }
