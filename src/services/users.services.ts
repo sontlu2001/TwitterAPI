@@ -1,3 +1,4 @@
+import Follower from '~/models/schemas/Follower.schema'
 import { USER_MESSAGES } from '~/constants/message'
 import { TokenType, UserVerifyStatus } from './../constants/enum'
 import { RegisterReqBody, UpdateMyProfileReqBody } from '~/models/request/User.request'
@@ -256,6 +257,25 @@ class UsersService {
       }
     )
     return user
+  }
+
+  async followUser(userId: string, followUserId: string) {
+    const isFollower = await databaseService.followers.findOne({
+      user_id: new ObjectId(userId),
+      follower_user_id: new ObjectId(followUserId)
+    })
+    if (isFollower === null) {
+      await databaseService.followers.insertOne(
+        new Follower({
+          user_id: new ObjectId(userId),
+          follower_user_id: new ObjectId(followUserId)
+        })
+      )
+      return {
+        message: USER_MESSAGES.FOLLOW_USER_SUCCESS
+      }
+    }
+    return { message: USER_MESSAGES.FOLLOWED }
   }
 }
 

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import { get } from 'lodash'
 import {
+  followUserController,
   forgotPasswordController,
   getMyProfileController,
   getProfileController,
@@ -16,6 +17,7 @@ import {
 import { filterMiddleware } from '~/middlewares/common.middleware'
 import {
   accessTokenValidator,
+  followUserValidator,
   forgotPasswordValidator,
   loginValidator,
   refreshTokenValidator,
@@ -77,4 +79,13 @@ usersRouter.patch(
   wrapRequestHandler(updateMyProfileController)
 )
 usersRouter.get('/:username', wrapRequestHandler(getProfileController))
+
+usersRouter.post(
+  '/follow',
+  validate(accessTokenValidator),
+  verifiedUserValidator,
+  validate(followUserValidator),
+  wrapRequestHandler(followUserController)
+)
+
 export default usersRouter

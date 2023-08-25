@@ -3,6 +3,7 @@ import { config } from 'dotenv'
 import User from '~/models/schemas/User.schema'
 import { get } from 'lodash'
 import RefreshToken from '~/models/schemas/RefreshToken'
+import Follower from '~/models/schemas/Follower.schema'
 
 config()
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.4pi3zzt.mongodb.net/?retryWrites=true&w=majority`
@@ -39,6 +40,10 @@ class DataBaseService {
 
   get refreshTokens(): Collection<RefreshToken> {
     return this.db.collection('refresh_tokens')
+  }
+
+  get followers(): Collection<Follower> {
+    return this.db.collection('followers')
   }
 }
 

@@ -50,3 +50,7 @@ export interface UpdateMyProfileReqBody {
   avatar?: string
   cover_photo?: string
 }
+
+export interface FollowUserReqBody {
+  followUserId: string
+}

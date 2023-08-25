@@ -6,6 +6,7 @@ import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
 import {
+  FollowUserReqBody,
   LoginReqBody,
   LogoutReqBody,
   RegisterReqBody,
@@ -154,4 +155,15 @@ export const getProfileController = async (req: Request, res: Response) => {
     message: USER_MESSAGES.GET_PROFILE_SUCCESS,
     result: user
   })
+}
+
+export const followUserController = async (
+  req: Request<ParamsDictionary, any, FollowUserReqBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req.decodedAuthorization as TokenPayLoad
+  const { followUserId } = req.body
+  const result = await usersService.followUser(userId, followUserId)
+  return res.json(result)
 }
