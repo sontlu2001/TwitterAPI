@@ -311,6 +311,29 @@ class UsersService {
       message: USER_MESSAGES.CHANGE_PASSWORD_SUCCESS
     }
   }
+
+  async refreshToken({
+    userId,
+    verify,
+    refreshToken
+  }: {
+    userId: string
+    verify: UserVerifyStatus
+    refreshToken: string
+  }) {
+    const [newAccessToken, newRefreshToken] = await Promise.all([
+      this.signAccessToken({ userId, verify }),
+      this.signRefreshToken({ userId, verify }),
+      databaseService.refreshTokens.deleteOne({ token: refreshToken })
+    ])
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({ user_id: new ObjectId(userId), token: refreshToken })
+    )
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken
+    }
+  }
 }
 
 const usersService = new UsersService()

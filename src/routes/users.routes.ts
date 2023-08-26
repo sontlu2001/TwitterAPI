@@ -8,6 +8,7 @@ import {
   getProfileController,
   loginController,
   logoutController,
+  refreshTokenController,
   registerController,
   resendVerifyEmailController,
   resetPasswordController,
@@ -107,5 +108,7 @@ usersRouter.put(
   validate(changePasswordValidator),
   wrapRequestHandler(changePasswordController)
 )
+
+usersRouter.post('/refresh-token', validate(refreshTokenValidator), wrapRequestHandler(refreshTokenController))
 
 export default usersRouter

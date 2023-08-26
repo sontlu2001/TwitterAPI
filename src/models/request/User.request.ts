@@ -1,3 +1,4 @@
+import { UserVerifyStatus } from './../../constants/enum'
 import { JwtPayload } from 'jsonwebtoken'
 import { ParamsDictionary } from 'express-serve-static-core'
 
@@ -21,6 +22,7 @@ export interface LogoutReqBody {
 export interface TokenPayLoad extends JwtPayload {
   userId: string
   token_type: string
+  verify: UserVerifyStatus
 }
 
 export interface VerifyEmailReqBody {
@@ -64,4 +66,8 @@ export interface ChangePasswordReqBody {
   oldPassword: string
   password: string
   confirmPassword: string
+}
+
+export interface RefreshTokenReqBody {
+  refreshToken: string
 }
