@@ -52,4 +52,5 @@ export const USER_MESSAGES = {
   FOLLOWED: 'User followed',
   ALREADY_UNFOLLOWED: 'User already unfollowed',
   UNFOLLOW_USER_SUCCESS: 'Unfollow user success',
+  GMAIL_NOT_VERIFIED: 'Gmail not verified'
 } as const

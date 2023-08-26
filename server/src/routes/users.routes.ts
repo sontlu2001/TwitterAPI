@@ -7,6 +7,7 @@ import {
   getProfileController,
   loginController,
   logoutController,
+  oauthController,
   registerController,
   resendVerifyEmailController,
   resetPasswordController,
@@ -36,6 +37,7 @@ import { validate } from '~/utils/validation'
 const usersRouter = Router()
 
 usersRouter.post('/login', validate(loginValidator), wrapRequestHandler(loginController))
+usersRouter.get('/oauth/google', wrapRequestHandler(oauthController))
 /**
  * Description. Register a new user
  * Path: /users/register

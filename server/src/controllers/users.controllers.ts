@@ -20,6 +20,8 @@ import {
 import User from '~/models/schemas/User.schema'
 import usersService from '~/services/users.services'
 import { HTTP_STATUS } from '~/constants/httpStatus'
+import { config } from 'dotenv'
+config()
 
 export const loginController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
   const user = req.user as User
@@ -32,6 +34,14 @@ export const loginController = async (req: Request<ParamsDictionary, any, LoginR
     message: USER_MESSAGES.LOGIN_SUCCESS,
     result
   })
+}
+
+export const oauthController = async (req: Request, res: Response) => {
+  const { code } = req.query
+  const result = await usersService.oauth(code as string)
+  const urlRedirect = `${process.env.CLIENT_REDIRECT_CALLBACK}?accessToken=${result.accessToken}
+  &refreshToken=${result.refreshToken}&newUser=${result.newUser}&verify=${result.verify}`
+  return res.redirect(urlRedirect)
 }
 
 export const registerController = async (
@@ -169,11 +179,7 @@ export const followUserController = async (
   return res.json(result)
 }
 
-export const unFollowUserController = async (
-  req: Request<ParamsDictionary>,
-  res: Response,
-  next: NextFunction
-) => {
+export const unFollowUserController = async (req: Request<ParamsDictionary>, res: Response, next: NextFunction) => {
   const { userId } = req.decodedAuthorization as TokenPayLoad
   const { userId: followedUserId } = req.params
   const result = await usersService.unFollowUser(userId, followedUserId)
