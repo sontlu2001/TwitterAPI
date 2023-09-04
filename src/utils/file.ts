@@ -1,13 +1,13 @@
 import { Request } from 'express'
-import formidable from 'formidable'
+import formidable, { File } from 'formidable'
 import fs from 'fs'
 import { filter } from 'lodash'
 import path from 'path'
+import { UPLOAD_TEMP_DIR } from '~/constants/dir'
 
 export const initFolder = () => {
-  const uploadFolderPath = path.resolve('uploads')
-  if (!fs.existsSync(uploadFolderPath)) {
-    fs.mkdirSync(uploadFolderPath, {
+  if (!fs.existsSync(UPLOAD_TEMP_DIR)) {
+    fs.mkdirSync(UPLOAD_TEMP_DIR, {
       recursive: true // tạo folder cha nếu folder cha chưa tồn tại
     })
   }
@@ -16,7 +16,7 @@ export const initFolder = () => {
 export const handleUploadImage = async (req: Request) => {
   const formidable = (await import('formidable')).default
   const form = formidable({
-    uploadDir: path.resolve('uploads'),
+    uploadDir: UPLOAD_TEMP_DIR,
     maxFiles: 1,
     keepExtensions: true,
     maxFileSize: 300 * 1024, // 300KB,
@@ -29,7 +29,7 @@ export const handleUploadImage = async (req: Request) => {
     }
   })
 
-  return new Promise((resolve, reject) => {
+  return new Promise<File>((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) {
         return reject(err)
@@ -38,7 +38,13 @@ export const handleUploadImage = async (req: Request) => {
       if (!Boolean(files.image)) {
         return reject(new Error('File is empty'))
       }
-      resolve(files)
+      resolve((files.image as File[])[0])
     })
   })
+}
+
+export const getNameFromFullName = (filename: string) => {
+  const name = filename.split('.')
+  name.pop()
+  return name.join('')
 }
