@@ -54,5 +54,6 @@ export const USER_MESSAGES = {
   UNFOLLOW_USER_SUCCESS: 'Unfollow user success',
   OLD_PASSWORD_INCORRECT: 'Old password incorrect',
   CHANGE_PASSWORD_SUCCESS: 'Change password success',
-  REFRESH_TOKEN_SUCCESS: 'Refresh token success'
+  REFRESH_TOKEN_SUCCESS: 'Refresh token success',
+  UPLOAD_SUCCESS: 'Upload success'
 } as const
