@@ -1,4 +1,4 @@
-import { UPLOAD_DIR } from './constants/dir'
+import { UPLOAD_IMAGE_TEMP_DIR } from './constants/dir'
 import { config } from 'dotenv'
 import express from 'express'
 import { defaultErrorHandler } from './middlewares/error.middleware'
@@ -17,7 +17,7 @@ initFolder()
 app.use(express.json())
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
-// app.use('/static', express.static(UPLOAD_DIR)) =>C1
+// app.use('/static', express.static(UPLOAD_IMAGE_TEMP_DIR)) =>C1
 app.use('/static', staticRouter)
 
 // default error handler

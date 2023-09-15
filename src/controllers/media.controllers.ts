@@ -3,10 +3,10 @@ import { NextFunction, Request, Response } from 'express'
 import mediasService from '~/services/medias.services'
 import { handleUploadImage } from '~/utils/file'
 import path from 'path'
-import { UPLOAD_DIR } from '~/constants/dir'
+import { UPLOAD_IMAGE_DIR } from '~/constants/dir'
 
-export const uploadSingleImageController = async (req: Request, res: Response, next: NextFunction) => {
-  const url = await mediasService.handleUploadSingleImage(req)
+export const uploadImageController = async (req: Request, res: Response, next: NextFunction) => {
+  const url = await mediasService.handleUploadImage(req)
   if (url) {
     return res.json({
       message: USER_MESSAGES.UPLOAD_SUCCESS,
@@ -17,7 +17,7 @@ export const uploadSingleImageController = async (req: Request, res: Response, n
 
 export const serveImageController = (req: Request, res: Response, next: NextFunction) => {
   const { name } = req.params
-  return res.sendFile(path.resolve(UPLOAD_DIR, name + '.jpg'), (err) => {
+  return res.sendFile(path.resolve(UPLOAD_IMAGE_DIR, name), (err) => {
     if (err) {
       res.status((err as any).status).send('Not found')
     }
